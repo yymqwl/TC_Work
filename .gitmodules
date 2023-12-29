@@ -1,3 +1,6 @@
 [submodule "Plugins/TC_SQL"]
 	path = Plugins/TC_SQL
 	url = git@github.com:yymqwl/TC_SQL.git
+[submodule "Plugins/TC_Core"]
+	path = Plugins/TC_Core
+	url = git@github.com:yymqwl/TC_Core.git
