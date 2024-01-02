@@ -4,3 +4,6 @@
 [submodule "Plugins/TC_Core"]
 	path = Plugins/TC_Core
 	url = git@github.com:yymqwl/TC_Core.git
+[submodule "Plugins/TC_HttpServer"]
+	path = Plugins/TC_HttpServer
+	url = git@github.com:yymqwl/TC_HttpServer.git
