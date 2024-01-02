@@ -3,6 +3,8 @@
 
 #include "TestAsyncActor.h"
 
+#include "HttpManager.h"
+
 // Sets default values
 ATestAsyncActor::ATestAsyncActor()
 {
