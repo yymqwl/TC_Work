@@ -7,3 +7,6 @@
 [submodule "Plugins/TC_HttpServer"]
 	path = Plugins/TC_HttpServer
 	url = git@github.com:yymqwl/TC_HttpServer.git
+[submodule "Plugins/TC_RPC"]
+	path = Plugins/TC_RPC
+	url = https://github.com/yymqwl/TC_RPC.git
