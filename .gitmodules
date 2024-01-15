@@ -10,3 +10,6 @@
 [submodule "Plugins/TC_RPC"]
 	path = Plugins/TC_RPC
 	url = https://github.com/yymqwl/TC_RPC.git
+[submodule "Plugins/Protobuf"]
+	path = Plugins/Protobuf
+	url = https://gitee.com/QingWeiLiao/ProtobufUE5.git
