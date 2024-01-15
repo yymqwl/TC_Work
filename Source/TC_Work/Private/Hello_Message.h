@@ -8,9 +8,9 @@
 #include "Hello_Message.generated.h"
 
 /**
- * 
+ * SpecifierX = 33
  */
-UCLASS()
+UCLASS( meta=( Test2 ="12312" ,Test3=22))
 class TC_WORK_API UHello_Message : public UObject,public IMessage 
 {
 	GENERATED_BODY()

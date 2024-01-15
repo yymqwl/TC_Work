@@ -22,12 +22,16 @@ void ATest_LogActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	auto hello_msg =UHello_Message::StaticClass();
+	auto str_meta=  hello_msg->GetMetaData("Test2");
+	
+	
+	GAME_LOG(TEXT("Message: %s"),*str_meta);
+	/*
 	TArray<UObject*> result;
-
-
-
 	//auto hello_msg_1 = NewObject<UHello_Message>();
 
+	
 	auto ping_msg =FindObject<UClass>(nullptr,TEXT("/Script/UEGF_Work.Hello_Message"));
 	
 	if (IsValid(ping_msg))
@@ -48,13 +52,14 @@ void ATest_LogActor::BeginPlay()
 	{
 		auto msg_class2 = all_classs[UAMessage::StaticClass()];
 	}
+	*/
 	/*
 	auto message =GetDefault<UMessage>();
 	GetObjectsOfClass()*/
 	
 	
 
-	
+	/*
 
 	GetObjectsOfClass(UInterface::StaticClass(), result, true);
 	GAME_LOG(TEXT("Message:开始 %d"),result.GetSlack());
@@ -72,7 +77,7 @@ void ATest_LogActor::BeginPlay()
 			GAME_LOG(TEXT("Hello_Message找到"));
 		}
 		//GAME_LOG(TEXT("Message:%s"),*obj->GetName());
-	}
+	}*/
 	GAME_LOG(TEXT("Message:结束"));
 	//GetObjectsOfClass(UMessage::GetClass(), result);
 	
