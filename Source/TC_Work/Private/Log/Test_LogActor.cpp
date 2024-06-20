@@ -27,6 +27,16 @@ void ATest_LogActor::BeginPlay()
 	
 	
 	GAME_LOG(TEXT("Message: %s"),*str_meta);
+
+
+	for (TFieldIterator<FProperty> it(hello_msg); it; ++it)
+	{
+		auto key = it->GetNameCPP();
+		str_meta = it->GetMetaData("DisplayName");
+		GAME_LOG(TEXT("Message: %s  %s"), *key,*str_meta);
+	}
+	
+
 	/*
 	TArray<UObject*> result;
 	//auto hello_msg_1 = NewObject<UHello_Message>();
