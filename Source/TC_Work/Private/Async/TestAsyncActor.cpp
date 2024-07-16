@@ -4,6 +4,10 @@
 #include "TestAsyncActor.h"
 
 #include "HttpManager.h"
+#include "Engine/AssetManager.h"
+#include "HAL/ThreadManager.h"
+
+
 
 // Sets default values
 ATestAsyncActor::ATestAsyncActor()
@@ -12,6 +16,7 @@ ATestAsyncActor::ATestAsyncActor()
 	PrimaryActorTick.bCanEverTick = true;
 
 	
+	//UAssetManager::GetStreamableManager().LoadSynchronous()
 	/*
 	if (InputComponent == nullptr)
 	{
@@ -30,12 +35,23 @@ ATestAsyncActor::ATestAsyncActor()
 }
 
 
+
+
+
 // Called when the game starts or when spawned
 void ATestAsyncActor::BeginPlay()
 {
 	Super::BeginPlay();
+	TestAsync1();
 	// 获取输入组件
 }
+void ATestAsyncActor::PrintThreadLog(FString str)
+{
+	uint32 CurrentThreadId = FPlatformTLS::GetCurrentThreadId();
+	FString CurrentThreadName = FThreadManager::Get().GetThreadName(CurrentThreadId);
+	UE_LOG(LogTemp, Display, TEXT("Thread: %s[%d] %s"), *CurrentThreadName, CurrentThreadId ,*str);
+}
+
 //InputComponent  = GetWorld()->GetFirstPlayerController()->InputComponent;
 	
 //auto input = FindComponentByClass<UEnhancedInputComponent>();
@@ -54,6 +70,143 @@ void ATestAsyncActor::OnKeyPressed(FKey Key)
 {
 	GF_LOG(TEXT("A Press"));
 }*/
+
+using namespace UE::Tasks;
+void ATestAsyncActor::TestAsync1()
+{
+	PrintThreadLog();
+	
+	{
+	 	FTaskEvent Event{ UE_SOURCE_LOCATION };
+		auto tk	=Launch(
+		UE_SOURCE_LOCATION,
+		[&Event,this]
+		{
+			Event.Wait();
+			PrintThreadLog();
+			UE_LOG(LogTemp, Log, TEXT("Hello Tasks!")); 
+		});
+		FPlatformProcess::Sleep(0.1f);
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsCompleted()); 
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsAwaitable()); 
+		Event.Trigger();
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsAwaitable()); 
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsCompleted());
+	}
+	/*
+	{	// FTaskEvent can be triggered multiple times
+		FTaskEvent Event{ UE_SOURCE_LOCATION };
+		Event.Trigger();
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsCompleted()); 
+		Event.Trigger();
+		Event.Trigger();
+		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsCompleted());
+
+		
+	}
+	{	// basic use-case, postpone waiting so the task is executed first
+		std::atomic<bool> Done{ false };
+		FTask Task = Launch(UE_SOURCE_LOCATION, [&Done]
+		{
+			FPlatformProcess::Sleep(3);
+			Done = true;
+		});
+		
+		
+		while (!Task.IsCompleted())
+		{
+			FPlatformProcess::Yield();
+		}
+		Task.BusyWait(FTimespan::FromMilliseconds(1));
+	
+		UE_LOG(LogTemp, Log, TEXT("%d"),Done.load());
+	}
+	{
+		FTaskEvent TaskEvent{ TEXT("TaskEvent") };
+		TArray<FTask> Prereqs
+		{
+
+			Launch(TEXT("Task A"), []
+			{
+				FPlatformProcess::Sleep(1);
+				UE_LOG(LogTemp, Log, TEXT("Task A"));
+			}),
+			Launch(TEXT("Task B"), [] {})
+
+		};
+		TaskEvent.AddPrerequisites(Prereqs);
+
+		FTask TaskC = Launch(TEXT("Task C"), [] {});
+		FTask TaskD = Launch(TEXT("Task D"), [] {});
+		TaskEvent.AddPrerequisites(Prerequisites(TaskC, TaskD));
+		
+		TaskEvent.Trigger();
+		UE_LOG(LogTemp, Log, TEXT("TaskEvent %d"),TaskEvent.IsCompleted());
+	}*/
+
+	/*
+	{
+		FPipe Pipe{ UE_SOURCE_LOCATION };
+
+		FTaskEvent TaskEvent{ TEXT("TaskEvent") };
+		TArray<FTask> Prereqs
+		{
+
+			Launch(TEXT("Task A"), [this,&Pipe]
+			{
+				FPlatformProcess::Sleep(1);
+				PrintThreadLog();
+				Pipe.Launch(UE_SOURCE_LOCATION,[this,&Pipe]
+					{
+						PrintThreadLog(FString::Format(TEXT("Task A {0}"),{Pipe.IsInContext()} ));
+					}).Wait();
+				UE_LOG(LogTemp, Log, TEXT("Task A "));
+			}),
+			Launch(TEXT("Task B"), [this,&Pipe]
+			{
+				FPlatformProcess::Sleep(1);
+				PrintThreadLog();
+				Pipe.Launch(UE_SOURCE_LOCATION,[this,&Pipe]
+				{
+					PrintThreadLog(FString::Format(TEXT("Task B {0}"),{Pipe.IsInContext()} ));
+				}).Wait();
+				UE_LOG(LogTemp, Log, TEXT("Task B"));
+			})
+
+		};
+		TaskEvent.AddPrerequisites(Prereqs);
+		TaskEvent.Trigger();
+		
+		UE_LOG(LogTemp, Log, TEXT("TaskEvent %d"),TaskEvent.IsCompleted());
+		TaskEvent.Wait();
+		UE_LOG(LogTemp, Log, TEXT("TaskEvent %d"),TaskEvent.IsCompleted());
+	}
+	{	// hold the first piped task execution until the next one is piped to test for non-concurrent execution
+		FPipe Pipe{ UE_SOURCE_LOCATION };
+		bool bTask1Done = false;
+		FTask Task1 = Pipe.Launch(UE_SOURCE_LOCATION, 
+			[this,&bTask1Done,&Pipe] 
+			{ 
+				FPlatformProcess::Sleep(3.f);
+				UE_LOG(LogTemp, Log, TEXT("%d_%d"),bTask1Done,Pipe.IsInContext());
+				bTask1Done = true;
+				PrintThreadLog();
+			}
+		);
+		
+		// we can't just check if `Task1` is completed because pipe gets unblocked and so the next piped task can start execution before the
+		// previous piped task's comlpetion flag is set
+		Pipe.Launch(UE_SOURCE_LOCATION, [&bTask1Done,this,&Pipe]
+		{
+			UE_LOG(LogTemp, Log, TEXT("%d_%d"),bTask1Done,Pipe.IsInContext());
+			PrintThreadLog();
+			
+		}).Wait();
+		UE_LOG(LogTemp, Log, TEXT("%d"),Task1.IsCompleted()); 
+	}*/
+
+}
+
 
 void ATestAsyncActor::Test1()
 {
@@ -226,6 +379,4 @@ void ATestAsyncActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ATestAsyncActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
 }
-

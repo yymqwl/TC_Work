@@ -27,7 +27,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
+
+	virtual void TestAsync1();
+	virtual void PrintThreadLog(FString str="");
 	//virtual void NotifyActorOnClicked(FKey ButtonPressed) override;
 	//virtual void DestroyPlayerInputComponent();
 public:	
