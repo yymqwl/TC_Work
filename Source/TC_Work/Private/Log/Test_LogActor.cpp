@@ -35,9 +35,6 @@ void ATest_LogActor::BeginPlay()
 		str_meta = it->GetMetaData("DisplayName");
 		GAME_LOG(TEXT("Message: %s  %s"), *key,*str_meta);
 	}
-
-
-
 	
 
 	/*

@@ -6,8 +6,9 @@
 #include "HttpManager.h"
 #include "Engine/AssetManager.h"
 #include "HAL/ThreadManager.h"
-
-
+//#include "UE5Coro/AsyncAwaiters.h"
+//#include "UE5Coro/Definitions.h"
+#include "UE5Coro.h"
 
 // Sets default values
 ATestAsyncActor::ATestAsyncActor()
@@ -92,6 +93,8 @@ void ATestAsyncActor::TestAsync1()
 		Event.Trigger();
 		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsAwaitable()); 
 		UE_LOG(LogTemp, Log, TEXT("%d"),Event.IsCompleted());
+
+
 	}
 	/*
 	{	// FTaskEvent can be triggered multiple times
@@ -212,8 +215,7 @@ void ATestAsyncActor::Test1()
 {
 	//SQL_LOG(TEXT("Test1 Call:%f"),	FPlatformTime::Seconds());
 
-	
-	
+
 
 	/*
 	TSharedPtr< SQLTableWrapper<FPerson> > f = MakeShareable(new SQLTableWrapper<FPerson>);

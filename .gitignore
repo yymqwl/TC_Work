@@ -75,3 +75,5 @@ DerivedDataCache/*
 .idea/
 .vsconfig
 Arts/
+Plugins/ue5coro/UE5Coro/Binaries/
+Plugins/ue5coro/UE5Coro/Intermediate/

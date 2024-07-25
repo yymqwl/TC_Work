@@ -15,5 +15,5 @@ class TC_WORK_API UHello_Message : public UObject,public IMessage
 	GENERATED_BODY()
 public:
 	UPROPERTY(meta = (DisplayName = "Hello Message"))
-	float Msg;
+	FString Msg;
 };
